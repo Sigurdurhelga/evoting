@@ -1,0 +1,61 @@
+/**
+  definition of models for an evoting platform for ibm hyperledger
+ */
+
+
+namespace org.evoting
+
+/*
+  An election has a ballot for each district, the electionid 
+  is a unique identifier for every election
+*/
+asset Election identified by electionId {
+  o String electionId
+  o Ballot[] ballots
+}
+
+/*
+  A ballot is created for each distric for an election, these ballots can 
+  have multiple different proposals which can all be individually voted on 
+  by the people in the district.
+*/
+asset Ballot identified by ballotId {
+  o String ballotId
+  o Proposal[] proposals
+  --> Person chairperson
+  --> District votingDistrict
+}
+
+/*
+  Proposals are items that persons vote on.
+
+*/
+asset Proposal identified by proposalId {
+  o String proposalId
+  o String description
+  o Integer voteCount
+  o DateTime creationDate
+}
+
+/*
+  people can vote on propsals for ballots in their districts.
+*/
+participant Person identified by email {
+  o String email
+  o String[] alreadyVoted
+  --> District district
+}
+
+participant District identified by name {
+  o String name
+}
+
+transaction vote {
+  --> Person voter
+  --> Proposal proposal
+}
+
+transaction createElection {
+  --> Person creator
+  o String[] items
+}
